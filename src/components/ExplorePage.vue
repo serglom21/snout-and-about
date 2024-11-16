@@ -8,13 +8,22 @@
           <img :src="require(`@/assets/${spot.image}`)" alt="spot image" class="spot-image" />
           <h2>{{ spot.name }}</h2>
           <p>{{ spot.description }}</p>
-          <button class="like-button" @click="likeSpot(spot)">🐾 Like</button>
+          <button class="like-button" @click="likeSpot(spot.id)">🐾 Like</button>
+          <div v-if="spot.comments" class="comments">
+            <h3>Other dogs who liked this spot:</h3>
+            <ul>
+              <li v-for="comment in spot.comments" :key="comment.id">{{ comment }}</li>
+            </ul>
+          </div>
+          <p v-if="spot.error" class="error">{{ spot.error }}</p>
         </div>
       </div>
     </div>
   </template>
   
   <script>
+  import * as Sentry from "@sentry/vue";
+
   export default {
     name: "ExplorePage",
     data() {
@@ -25,28 +34,48 @@
             name: "Big Red Hydrant",
             description: "A favorite spot in the neighborhood with the perfect sniff factor!",
             image: "fire-hydrant.webp",
+            comments: null,
             likes: 0,
+            error: null
           },
           {
             id: 2,
             name: "Shady Oak Park",
             description: "Great for running and sniffing with plenty of trees.",
             image: "shady-oak-hydrant.webp",
+            comments: null,
             likes: 0,
+            error: null
           },
           {
             id: 3,
             name: "Sunny Dog Beach",
             description: "A sandy paradise where you can dig, roll, and splash in the waves.",
             image: "beach-hydrant.webp",
+            comments: null,
             likes: 0,
+            error: null
           },
         ],
       };
     },
     methods: {
-      likeSpot(spot) {
-        spot.likes += 1;
+      async likeSpot(spotId) {
+        const spot = this.spots.find((s) => s.id === spotId);
+        try {
+          const response = await fetch(`http://127.0.0.1:8000/api/hydrants/${spotId}/like`, {
+            method: "POST",
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to like hydrant with ID ${spotId}`);
+          }
+          const data = await response.json();
+          spot.comments = data.comments;
+          spot.error = null;
+        } catch (error) {
+          spot.error = "An error occurred while liking the hydrant.";
+          Sentry.captureException(error)
+        }
       },
     },
   };
