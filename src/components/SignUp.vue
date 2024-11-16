@@ -129,7 +129,12 @@
   </template>
   
   <script>
+  import PaginationUtil from "@/components/PaginationUtil.vue";
+
   export default {
+    components: {
+      PaginationUtil
+    },
     data() {
      // this.getBannerReady();
       return {
@@ -138,12 +143,21 @@
         password: "",
         confirmPassword: "",
         popularSpots: [],
-        bannerReady: false
+        bannerReady: false,
+        pageSize: 10,
+        currentPage: 1,
       };
     },
     mounted() {
       this.populateSpots();
       this.bannerReady = true
+    },
+    computed: {
+      currentPageSpots(){
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        return this.popularSpots.slice(start, end);
+      }
     },
     methods: {
       populateSpots(){
@@ -158,7 +172,10 @@
         // Logic for signing up goes here
         console.log("Dog Name:", this.dogName);
         console.log("Username:", this.username);
-      }
+      },
+      updatePage(newPage) {
+        this.currentPage = newPage;
+      },
     }
   };
   </script>
