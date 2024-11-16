@@ -9,6 +9,7 @@ Sentry.init({
     app,
     debug:true,
     dsn: process.env.VUE_APP_SENTRY_DSN,
+    release: "3.0",
     integrations: [
         Sentry.browserTracingIntegration({router}),
         Sentry.replayIntegration(),
@@ -18,5 +19,6 @@ Sentry.init({
     replaysOnErrorSampleRate: 1.0,
 })
 
-app.mount('#app')
 app.use(router)
+app.mount('#app')
+

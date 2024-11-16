@@ -3,9 +3,17 @@
       <div class="hero-section">
         <h1>Barkingly good? Woofingly bad? or feeling</h1>
         <p>You will find the pawfect hydrant for any mood!</p>
-        <div>
-          <div class="hydrant-placeholder">
+        <div v-if="bannerReady" class="large-image-placeholder">
+          <div>
+            <div class="hydrant-placeholder"></div>
+          </div>
         </div>
+        <div v-else>
+          <div>
+            <div class="hydrant-placeholder-loading">
+              <p>Placeholder Image</p>
+            </div>
+          </div>
         </div>
       </div>
   
@@ -107,19 +115,45 @@
     </div>
   </div>
 
+  <div v-if="popularSpots.length > 0">
+    <h1>Check out these popular spots!</h1>
+    <div class="spots-container">
+      <div class="spots-column">
+        <div v-for="spot in popularSpots" :key="spot.id" class="spot">
+          {{ spot.name }} ({{ spot.sniffCount }} sniffs)
+        </div>
+      </div>
+    </div>
+  </div>
+
   </template>
   
   <script>
   export default {
     data() {
+     // this.getBannerReady();
       return {
         dogName: "",
         username: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        popularSpots: [],
+        bannerReady: false
       };
     },
+    mounted() {
+      this.populateSpots();
+      this.bannerReady = true
+    },
     methods: {
+      populateSpots(){
+        const spots = Array.from({ length: 100000 }, (_, i) => ({
+          id: i,
+          name: `Spot ${i}`,
+          sniffCount: Math.floor(Math.random() * 1000),
+        }));
+        this.popularSpots = spots;
+      },
       signup() {
         // Logic for signing up goes here
         console.log("Dog Name:", this.dogName);
@@ -152,7 +186,7 @@
     margin-bottom: 20px;
   }
   
-  .hydrant-placeholder {
+  .hydrant-placeholder, .hydrant-placeholder-loading {
     border: 1px dashed #ccc;
     width: 80%;
     height: 300px;
@@ -160,10 +194,13 @@
     justify-content: center;
     align-items: center;
     font-style: italic;
+    
+  }
+  
+  .hydrant-placeholder {
     background-image: url('../assets/dog-hydrant.jpg');
     background-size: cover;
   }
-  
   .signup-form {
     width: 40%;
     padding: 20px;
@@ -278,5 +315,21 @@
     padding: 1em;
     margin-bottom: 1em;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .spot {
+    padding: 5px;
+    border-bottom: 1px solid #ddd;
+    display: block;
+    margin-bottom: 30px;
+  }
+
+  .spots-container {
+    display: flex;
+    justify-content: center
+  }
+
+  .spots-column {
+    flex-direction: column;
   }
   </style>
