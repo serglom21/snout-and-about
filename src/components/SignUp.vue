@@ -129,12 +129,8 @@
   </template>
   
   <script>
-  import PaginationUtil from "@/components/PaginationUtil.vue";
 
   export default {
-    components: {
-      PaginationUtil
-    },
     data() {
      // this.getBannerReady();
       return {
