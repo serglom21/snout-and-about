@@ -119,12 +119,19 @@
     <h1>Check out these popular spots!</h1>
     <div class="spots-container">
       <div class="spots-column">
-        <div v-for="spot in popularSpots" :key="spot.id" class="spot">
+        <div v-for="spot in currentPageSpots" :key="spot.id" class="spot">
           {{ spot.name }} ({{ spot.sniffCount }} sniffs)
         </div>
       </div>
     </div>
   </div>
+
+  <PaginationUtil
+    :total-items="popularSpots.length"
+    :page-size="pageSize"
+    :current-page="currentPage"
+    @updatePage="updatePage"
+  />
 
   </template>
   
