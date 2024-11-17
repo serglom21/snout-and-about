@@ -28,6 +28,7 @@
     name: "ExplorePage",
     data() {
       return {
+        activeSpan: null,
         spots: [
           {
             id: 1,
@@ -59,12 +60,15 @@
         ],
       };
     },
+    mounted(){
+      this.activeSpan = Sentry.getActiveSpan() ?? null;
+    },
     methods: {
       async likeSpot(spotId) {
         const keyName = "comment"
         const spot = this.spots.find((s) => s.id === spotId);
         try {
-          const response = await fetch(`http://127.0.0.1:8000/api/hydrants/${spotId}/like`, {
+          let response = await fetch(`http://127.0.0.1:8000/api/hydrants/${spotId}/like`, {
             method: "POST",
             body: JSON.stringify({
               keyName
@@ -73,7 +77,8 @@
               "Content-Type": "application/json"
             }
           });
-          if (!response.ok) {
+      
+          if (!response?.ok) {
             throw new Error(`Failed to like hydrant with ID ${spotId}`);
           }
           const data = await response.json();
@@ -81,9 +86,8 @@
           spot.error = null;
         } catch (error) {
           spot.error = "An error occurred while liking the hydrant.";
-          const activeSpan = Sentry.getActiveSpan() ?? null;
-          if (activeSpan) {
-            Sentry.withActiveSpan(activeSpan, () => {
+          if (this.activeSpan) {
+            Sentry.withActiveSpan(this.activeSpan, () => {
               Sentry.captureException(error)
             })
           } else {
