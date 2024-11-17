@@ -74,7 +74,14 @@
           spot.error = null;
         } catch (error) {
           spot.error = "An error occurred while liking the hydrant.";
-          Sentry.captureException(error)
+          const activeSpan = Sentry.getActiveSpan() ?? null;
+          if (activeSpan) {
+            Sentry.withActiveSpan(activeSpan, () => {
+              Sentry.captureException(error)
+            })
+          } else {
+            Sentry.captureException(error)
+          }
         }
       },
     },
