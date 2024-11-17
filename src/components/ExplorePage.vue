@@ -61,16 +61,23 @@
     },
     methods: {
       async likeSpot(spotId) {
+        const keyName = "comment"
         const spot = this.spots.find((s) => s.id === spotId);
         try {
           const response = await fetch(`http://127.0.0.1:8000/api/hydrants/${spotId}/like`, {
             method: "POST",
+            body: JSON.stringify({
+              keyName
+            }),
+            headers: {
+              "Content-Type": "application/json"
+            }
           });
           if (!response.ok) {
             throw new Error(`Failed to like hydrant with ID ${spotId}`);
           }
           const data = await response.json();
-          spot.comments = data.comments;
+          spot[keyName] = data[keyName]
           spot.error = null;
         } catch (error) {
           spot.error = "An error occurred while liking the hydrant.";

@@ -9,7 +9,7 @@ Route::get('/health', function (Request $request) {
     ]);
 });
 
-Route::post('/hydrants/{id}/like', function ($id) {
+Route::post('/hydrants/{id}/like', function (Request $request,$id) {
     $hydrants = [
         1 => [
             'name' => 'Big Red Hydrant',
@@ -17,7 +17,7 @@ Route::post('/hydrants/{id}/like', function ($id) {
         ],
         2 => [
             'name' => 'Shady Oak Park',
-            'remarks' => ['Great park for running!', 'Cool and shady.'],
+            'comments' => ['Great park for running!', 'Cool and shady.'],
         ],
     ];
 
@@ -25,11 +25,22 @@ Route::post('/hydrants/{id}/like', function ($id) {
         return response()->json(['error' => 'Hydrant not found.'], 404);
     }
 
+    $body = $request->all();
+
     $hydrant = $hydrants[$id];
 
-    // Intentional error: Access the wrong key
-    return response()->json([
-        'name' => $hydrant['name'],
-        'comments' => $hydrant['comments'],
-    ]);
+    try {
+        if (array_key_exists($body["keyName"], $hydrant)) {
+            $data = [
+                $body["keyName"] => $hydrant[$body["keyName"]]
+            ];
+        } else {
+            throw new Exception("Key name: " . $body["keyName"] . " does not exist.");
+        }
+    } catch (\Throwable $exception) {
+        \Sentry\captureException($exception);
+        return response()->json(['error' => 'Key not found.'], 404);
+    }
+
+    return response()->json($data, 200);
 });
