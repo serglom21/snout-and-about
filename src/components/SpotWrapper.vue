@@ -7,6 +7,7 @@
 
 <script>
     export default {
+        name: "SpotWrapper",
         props: {
             spotName: String,
             sniffCount: Number

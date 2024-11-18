@@ -135,6 +135,7 @@
   import SpotWrapper from "@/components/SpotWrapper.vue";
 
   export default {
+    name: "SignUp",
     components: {
       SpotWrapper,
     },
