@@ -119,9 +119,12 @@
     <h1>Check out these popular spots!</h1>
     <div class="spots-container">
       <div class="spots-column">
-        <div v-for="spot in popularSpots" :key="spot.id" class="spot">
-          {{ spot.name }} ({{ spot.sniffCount }} sniffs)
-        </div>
+        <SpotWrapper
+          v-for="spot in popularSpots"
+          :key="spot.id"
+          :spotName="spot.name"
+          :sniffCount="spot.sniffCount"
+        />
       </div>
     </div>
   </div>
@@ -129,8 +132,12 @@
   </template>
   
   <script>
+  import SpotWrapper from "@/components/SpotWrapper.vue";
 
   export default {
+    components: {
+      SpotWrapper,
+    },
     data() {
      // this.getBannerReady();
       return {
@@ -157,7 +164,7 @@
     },
     methods: {
       populateSpots(){
-        const spots = Array.from({ length: 100000 }, (_, i) => ({
+        const spots = Array.from({ length: 10000 }, (_, i) => ({
           id: i,
           name: `Spot ${i}`,
           sniffCount: Math.floor(Math.random() * 1000),
@@ -330,12 +337,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .spot {
-    padding: 5px;
-    border-bottom: 1px solid #ddd;
-    display: block;
-    margin-bottom: 30px;
-  }
+ 
 
   .spots-container {
     display: flex;

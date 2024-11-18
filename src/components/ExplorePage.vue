@@ -29,6 +29,7 @@
     data() {
       return {
         activeSpan: null,
+        backendUrl: null,
         spots: [
           {
             id: 1,
@@ -62,13 +63,14 @@
     },
     mounted(){
       this.activeSpan = Sentry.getActiveSpan() ?? null;
+      this.backendUrl = process.env.VUE_APP_HYDRANT_BACKEND_URL;
     },
     methods: {
       async likeSpot(spotId) {
         const keyName = "comment"
         const spot = this.spots.find((s) => s.id === spotId);
         try {
-          let response = await fetch(`http://127.0.0.1:8000/api/hydrants/${spotId}/like`, {
+          let response = await fetch(`${this.backendUrl}/api/hydrants/${spotId}/like`, {
             method: "POST",
             body: JSON.stringify({
               keyName
